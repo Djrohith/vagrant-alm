@@ -4,7 +4,7 @@
   become_user: "{{ postgresql_user }}"
   postgresql_db:
     name: "{{ sonar_database_name }}"
-    encoding: SQL_ASCII
+    encoding: UTF-8
     state: present
 
 - name: Create a sonar user.

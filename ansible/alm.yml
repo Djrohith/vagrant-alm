@@ -16,7 +16,7 @@
   roles:
     - geerlingguy.repo-epel
     - geerlingguy.jenkins
-    - geerlingguy.git
+#    - geerlingguy.git
     - tecris.maven
     - geerlingguy.ansible
 
@@ -27,7 +27,7 @@
 
   roles:
     - geerlingguy.java
-    - savoirfairelinux.nexus3-oss
+    - dockpack.nexus
 
 - name: Deploy Sonar Server
   hosts: sonar_server

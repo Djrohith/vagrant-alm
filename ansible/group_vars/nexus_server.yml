@@ -1,4 +1,4 @@
-nexus_version: '3.4.0-02'
+nexus_version: '3.14.0-04'
 nexus_timezone: 'America/Sao_Paulo'
 nexus_admin_password: 'admin123'
 nexus_anonymous_access: true
