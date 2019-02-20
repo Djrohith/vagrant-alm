@@ -45,6 +45,10 @@
 - name: Ensure Sonar is running and set to start on boot.
   service: name=sonar state=started enabled=yes
 
+- name: install firewalld
+  yum: name=firewalld state=present 
+
+
 - name: Ensure firewall listen on port 9000
   firewalld:
     port: 9000/tcp
