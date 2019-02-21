@@ -19,6 +19,25 @@
     - geerlingguy.git
     - tecris.maven
     - geerlingguy.ansible
+- name: jenkins pipeline configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: Creates directory
+      file:
+       path: /var/lib/jenkins/jobs/DemoJob/
+       state: directory
+       owner: jenkins
+       group: jenkins
+       mode: 777
+    - name: copy
+      copy:
+       src: config.xml
+       dest: /var/lib/jenkins/jobs/DemoJob/config.xml
+       owner: jenkins
+       group: jenkins
+       mode: 0644
 
 - name: Deploy Nexus Server
   hosts: nexus_server
