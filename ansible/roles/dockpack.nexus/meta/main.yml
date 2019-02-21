@@ -1,0 +1,27 @@
+galaxy_info:
+  author: bbaassssiiee
+  description: Sonatype Nexus 3 artifact manager
+  company: your company (optional)
+
+  issue_tracker_url: https://github.com/bbaassssiiee/nexus/issues
+
+  license: BSD
+
+  min_ansible_version: 2.0
+
+  github_branch: master
+
+  platforms:
+    - name: EL
+      versions:
+        - 6
+        - 7
+
+  galaxy_tags:
+    - sonatype
+    - nexus
+    - repository
+    - repositories
+
+dependencies:
+  - bbaassssiiee.base_java8

@@ -1,0 +1,34 @@
+---
+dependency:
+  name: galaxy
+  options:
+    role-file: requirements.yml
+driver:
+  name: docker
+lint:
+  name: yamllint
+platforms:
+  - name: java-archlinux-default
+    image: base/archlinux
+  - name: java-archlinux-openjdk-7-jre
+    image: base/archlinux
+  - name: java-archlinux-openjdk-8-jre
+    image: base/archlinux
+  - name: java-archlinux-openjdk-10-jre
+    image: base/archlinux
+  - name: java-archlinux-openjdk-7-jdk
+    image: base/archlinux
+  - name: java-archlinux-openjdk-8-jdk
+    image: base/archlinux
+  - name: java-archlinux-openjdk-10-jdk
+    image: base/archlinux
+provisioner:
+  name: ansible
+  lint:
+    name: ansible-lint
+scenario:
+  name: archlinux
+verifier:
+  name: goss
+  lint:
+    name: yamllint

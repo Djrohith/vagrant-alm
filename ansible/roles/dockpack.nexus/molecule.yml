@@ -1,0 +1,28 @@
+---
+
+dependency:
+  name: galaxy
+  requirements_file: requirements.yml
+driver:
+  name: vagrant
+vagrant:
+  raw_config_args:
+    - "vbguest.auto_update = false"
+    - "vm.synced_folder './', '/vagrant', disabled: true"
+    - "ssh.insert_key = false"
+  platforms:
+    - name: redesign/centos7
+      box: redesign/centos7
+      box_url: https://atlas.hashicorp.com/redesign/boxes/centos7
+  providers:
+    - name: virtualbox
+      type: virtualbox
+      options:
+        memory: 4096
+        cpus: 2
+  instances:
+    - name: bbaassssiiee.nexus
+      ansible_groups:
+        - nexus
+verifier:
+  name: testinfra

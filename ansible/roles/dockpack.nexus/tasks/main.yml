@@ -1,0 +1,188 @@
+---
+
+- name: ensure facts can be stored locally
+  file:
+    path: /etc/ansible/facts.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - nexus
+
+- name: set nexus_name
+  set_fact:
+    nexus_name: "nexus-{{ nexus_version }}"
+  tags:
+    - nexus
+    - test
+
+- name: set nexus_home
+  set_fact:
+    nexus_home: "{{ nexus_location }}/{{ nexus_name }}"
+  tags:
+    - nexus
+    - test
+
+- name: make sure directory for Nexus exists
+  file:
+    dest: "{{ nexus_home }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+  tags:
+    - nexus
+
+- name: make sure group for Nexus exists
+  become: true
+  group:
+    name: "{{ nexus_group }}"
+    state: present
+  tags:
+    - nexus
+
+- name: make sure user for Nexus exists
+  become: true
+  user:
+    name: "{{ nexus_user }}"
+    group: "{{ nexus_group }}"
+    shell: /bin/bash
+    state: present
+  tags:
+    - nexus
+
+- name: copy limits file
+  copy:
+    src: nexus_limits.conf
+    dest: /etc/security/limits.d/nexus_limits.conf
+    owner: root
+    group: root
+  notify: restart nexus
+
+- name: verify presence of nexus
+  stat:
+    path: "{{ nexus_home }}/bin/nexus"
+  register: nexus_installed
+  tags:
+    - nexus
+
+- name: install Nexus facts
+  template:
+    src: nexus.fact
+    dest: /etc/ansible/facts.d/nexus.fact
+    owner: root
+    group: root
+    mode: 0644
+  tags:
+    - nexus
+
+- name: reload local facts
+  setup:
+  tags:
+    - test
+
+- name: unarchive Nexus
+  unarchive:
+    src: "{{ nexus_url }}"
+    dest: "{{ nexus_location }}"
+    copy: false
+  retries: 3
+  when: not nexus_installed.stat.exists
+  tags:
+    - nexus
+
+- name: link to Nexus for convention
+  file:
+    src: "{{ nexus_location }}/nexus-{{ nexus_version }}"
+    dest: /usr/local/nexus
+    owner: "{{ nexus_user }}"
+    group: "{{ nexus_group }}"
+    state: link
+  tags:
+    - nexus
+
+- name: link Nexus init.d file
+  file:
+    src: "{{ nexus_home }}/bin/nexus"
+    dest: /etc/init.d/nexus
+    state: link
+  tags:
+    - nexus
+
+- name: create Nexus etc directory
+  file:
+    path: "{{ nexus_workdir }}/etc"
+    owner: "{{ nexus_user }}"
+    group: "{{ nexus_group }}"
+    mode: 0750
+    state: directory
+
+- name: update Nexus port
+  template:
+    src: nexus.properties
+    dest: "{{ nexus_workdir }}/etc/nexus.properties"
+    owner: "{{ nexus_user }}"
+    group: "{{ nexus_group }}"
+  notify:
+    - reload unit
+    - restart nexus
+  tags:
+    - nexus
+    - init
+
+- name: render Nexus systemd service file
+  template:
+    src: nexus.service
+    dest: /etc/systemd/system/nexus.service
+    owner: root
+    group: root
+  notify:
+    - reload unit
+    - restart nexus
+  tags:
+    - nexus
+    - init
+
+- name: render Nexus Shell profile
+  template:
+    src: nexus.profile.sh
+    dest: /etc/profile.d/nexus.profile.sh
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - reload unit
+    - restart nexus
+
+- name: register service with system
+  service:
+    name: nexus
+    enabled: true
+  notify: restart nexus
+  tags:
+    - nexus
+    - init
+
+- name: grant ownership on Nexus logs directory
+  file:
+    path: "{{ nexus_workdir }}/log"
+    owner: "{{ nexus_user }}"
+    group: "{{ nexus_group }}"
+    mode: 0750
+    state: directory
+
+- name: grant ownership on nexus_workdir
+  file:
+    path: "{{ nexus_workdir }}"
+    owner: "{{ nexus_user }}"
+    group: "{{ nexus_group }}"
+    recurse: true
+
+- name: grant ownership on nexus_piddir
+  become: true
+  file:
+    path: "{{ nexus_piddir }}"
+    owner: "{{ nexus_user }}"
+    group: "{{ nexus_group }}"
+    state: directory

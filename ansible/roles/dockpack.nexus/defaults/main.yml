@@ -1,0 +1,7 @@
+---
+nexus_version: 3.14.0-04
+nexus_workdir: /opt/nexus/sonatype-work/nexus3
+nexus_piddir: /var/run/nexus
+nexus_user: nexus
+nexus_group: nexus
+nexus_port: 8081

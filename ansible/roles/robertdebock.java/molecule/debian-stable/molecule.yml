@@ -1,0 +1,26 @@
+---
+dependency:
+  name: galaxy
+  options:
+    role-file: requirements.yml
+driver:
+  name: docker
+lint:
+  name: yamllint
+platforms:
+  - name: java-debian-stable-default
+    image: debian:stable
+  - name: java-debian-stable-openjdk-8-jre
+    image: debian:stable
+  - name: java-debian-stable-openjdk-8-jdk
+    image: debian:stable
+provisioner:
+  name: ansible
+  lint:
+    name: ansible-lint
+scenario:
+  name: debian-stable
+verifier:
+  name: goss
+  lint:
+    name: yamllint

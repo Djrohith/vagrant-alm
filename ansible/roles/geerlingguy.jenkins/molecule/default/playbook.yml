@@ -1,0 +1,23 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+
+  pre_tasks:
+    - include_tasks: java-8.yml
+
+  roles:
+    - role: geerlingguy.java
+    - role: geerlingguy.jenkins
+
+  post_tasks:
+    - name: Check if Jenkins is running.
+      uri:
+        url: "http://127.0.0.1:8080/"
+
+    - jenkins_job:
+        config: "{{ lookup('file', '/home/centos/config.xml') }}"
+        name: Soccer stats Job
+        password: admin123
+        url: http://127.0.0.1:8080
+        user: admin 

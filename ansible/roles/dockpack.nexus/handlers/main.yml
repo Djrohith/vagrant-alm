@@ -1,0 +1,18 @@
+---
+
+- name: reload unit
+  become: true
+  systemd:
+    name: nexus
+    state: restarted
+    daemon_reload: true
+
+- name: restart nexus
+  service:
+    name: nexus
+    state: restarted
+
+- name: start nexus
+  service:
+    name: nexus
+    state: started

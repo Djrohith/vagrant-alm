@@ -1,0 +1,17 @@
+[Unit]
+Description=nexus
+After=network.target
+
+[Service]
+Type=forking
+EnvironmentFile=/etc/profile.d/nexus.profile.sh
+#PIDFile={{ nexus_piddir }}/nexus.pid
+ExecStart=/usr/local/nexus/bin/nexus start
+ExecReload=/usr/local/nexus/bin/nexus restart
+ExecStop=/usr/local/nexus/bin/nexus stop
+User={{ nexus_user }}
+Restart=on-abort
+
+[Install]
+Alias=nexus
+WantedBy=multi-user.target

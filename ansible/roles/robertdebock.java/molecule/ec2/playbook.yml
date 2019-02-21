@@ -1,0 +1,9 @@
+---
+- name: Default
+  hosts: all
+  gather_facts: no
+  become: yes
+
+  roles:
+    - robertdebock.bootstrap
+    - ansible-role-java
