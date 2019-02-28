@@ -51,7 +51,8 @@
           url: http://localhost:8080
       with_items:
            - quality-gates
-           - nexus-platform-plugin
+           - nexus-jenkins-plugin
+           - sonar-quality-gates
 
 - name: Deploy Nexus Server
   hosts: nexus_server
