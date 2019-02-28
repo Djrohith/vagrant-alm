@@ -38,6 +38,20 @@
        owner: jenkins
        group: jenkins
        mode: 0644
+- name: jenkins pipeline configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: Adding Plugin
+      jenkins_plugin:
+          name: "{{ item }}"
+          url_username: admin
+          url_password: admin123
+          url: http://localhost:8080
+      with_items:
+           - quality-gates
+           - nexus-platform-plugin
 
 - name: Deploy Nexus Server
   hosts: nexus_server
