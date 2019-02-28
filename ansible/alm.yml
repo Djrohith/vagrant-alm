@@ -54,6 +54,22 @@
            - nexus-jenkins-plugin
            - sonar-quality-gates
 
+
+- name: jenkins pipeline configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: Restart Jenkins to make the plugin data available
+      service: name=jenkins state=restarted
+    - name: Wait for Jenkins to restart
+      wait_for:
+          host=localhost
+          port=8080
+          delay=20
+          timeout=300
+
+
 - name: Deploy Nexus Server
   hosts: nexus_server
   remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
