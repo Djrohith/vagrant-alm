@@ -19,6 +19,7 @@
     - geerlingguy.git
     - tecris.maven
     - geerlingguy.ansible
+
 - name: jenkins pipeline configuration
   hosts: jenkins_server
   remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
@@ -37,8 +38,25 @@
        dest: /var/lib/jenkins/jobs/DemoJob/config.xml
        owner: jenkins
        group: jenkins
-       mode: 0644
-- name: jenkins pipeline configuration
+       mode: 0700
+
+
+- name: jenkins pipeline Credentials configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: copy
+      copy:
+       src: credentials.xml
+       dest: /var/lib/jenkins/jobs/credentials.xml
+       owner: jenkins
+       group: jenkins
+       mode: 0700
+
+
+
+- name: jenkins pipeline plugin configuration
   hosts: jenkins_server
   remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
   become: yes
@@ -53,9 +71,13 @@
            - quality-gates
            - nexus-jenkins-plugin
            - sonar-quality-gates
+      tags: ['skip_ansible_lint']
+      register: plugin_result
+      until: plugin_result is success
+      retries: 3
+      delay: 2
 
-
-- name: jenkins pipeline configuration
+- name: jenkins restart server
   hosts: jenkins_server
   remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
   become: yes
