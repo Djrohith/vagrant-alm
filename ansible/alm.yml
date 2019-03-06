@@ -49,7 +49,7 @@
     - name: copy
       copy:
        src: credentials.xml
-       dest: /var/lib/jenkins/jobs/credentials.xml
+       dest: /var/lib/jenkins/credentials.xml
        owner: jenkins
        group: jenkins
        mode: 0700
