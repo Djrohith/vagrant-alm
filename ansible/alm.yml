@@ -8,6 +8,23 @@
 #      command: "ansible-galaxy install --ignore-errors -r requirements.yml"
 
 # Let's rock on ALM
+- name: yum update packages
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+
+  roles:
+    - linuxupdate.packages
+
+- name: yum update packages
+  hosts: sonar_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+
+  roles:
+    - linuxupdate.packages
+
+
 - name: Deploy Jenkins CI
   hosts: jenkins_server
   remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
