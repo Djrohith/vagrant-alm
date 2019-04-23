@@ -44,7 +44,7 @@
   tasks:
     - name: Creates directory
       file:
-       path: /var/lib/jenkins/jobs/DemoJob/
+       path: /var/lib/jenkins/jobs/petclinicJob/
        state: directory
        owner: jenkins
        group: jenkins
@@ -56,6 +56,7 @@
        owner: jenkins
        group: jenkins
        mode: 0700
+ 
 
 
 - name: jenkins pipeline Credentials configuration
@@ -126,6 +127,18 @@
   roles:
     - wtanaka.unzip
     - zanini.sonar
+
+- name: Deploy rundeck Server
+  hosts: app_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+
+  roles:
+    - robertdebock.bootstrap
+    - robertdebock.java
+    - robertdebock.service
+    - robertdebock.rundeck 
+
 
 - name: On Premises CentOS
   hosts: app_server
