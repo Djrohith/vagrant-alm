@@ -24,6 +24,13 @@
   roles:
     - linuxupdate.packages
 
+- name: yum update packages
+  hosts: app_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+
+  roles:
+    - linuxupdate.packages
 
 - name: Deploy Jenkins CI
   hosts: jenkins_server
@@ -37,6 +44,19 @@
     - tecris.maven
     - geerlingguy.ansible
 
+- name: jenkins copy-key from master
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/aws-private.pem
+       dest: /root/aws-private.pem
+       owner: jenkins
+       group: jenkins
+       mode: 0700
+
 - name: jenkins pipeline configuration
   hosts: jenkins_server
   remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
@@ -44,7 +64,7 @@
   tasks:
     - name: Creates directory
       file:
-       path: /var/lib/jenkins/jobs/petclinicJob/
+       path: /var/lib/jenkins/jobs/petclinic/
        state: directory
        owner: jenkins
        group: jenkins
@@ -52,7 +72,7 @@
     - name: copy
       copy:
        src: config.xml
-       dest: /var/lib/jenkins/jobs/DemoJob/config.xml
+       dest: /var/lib/jenkins/jobs/petclinic/config.xml
        owner: jenkins
        group: jenkins
        mode: 0700
@@ -109,6 +129,27 @@
           delay=20
           timeout=300
 
+- name: jenkins server sshd permissions
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks: 
+    - name: sshd PermitRootLogin set to '{{ sshd_PermitRootLogin }}'
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin'
+        line: 'PermitRootLogin {{ sshd_PermitRootLogin }}'
+        validate: 'sshd -t -f %s'
+      notify: restart ssh service
+      when: sshd_PermitRootLogin is defined
+    - name: sshd PasswordAuthentication set to '{{ sshd_PasswordAuthentication }}'
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication'
+        line: 'PasswordAuthentication {{ sshd_PasswordAuthentication }}'
+        validate: 'sshd -t -f %s'
+      notify: restart ssh service
+      when: sshd_PasswordAuthentication is defined
 
 - name: Deploy Nexus Server
   hosts: nexus_server
@@ -128,17 +169,38 @@
     - wtanaka.unzip
     - zanini.sonar
 
-- name: Deploy rundeck Server
+#- name: Deploy rundeck Server
+#  hosts: app_server
+#  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+#  become: yes
+
+#  roles:
+#    - robertdebock.bootstrap
+#    - robertdebock.java
+#    - robertdebock.service
+#    - robertdebock.rundeck 
+
+- name: application server sshd permissions
   hosts: app_server
   remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
   become: yes
-
-  roles:
-    - robertdebock.bootstrap
-    - robertdebock.java
-    - robertdebock.service
-    - robertdebock.rundeck 
-
+  tasks:
+    - name: sshd PermitRootLogin set to '{{ sshd_PermitRootLogin }}'
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^PermitRootLogin'
+        line: 'PermitRootLogin {{ sshd_PermitRootLogin }}'
+        validate: 'sshd -t -f %s'
+      notify: restart ssh service
+      when: sshd_PermitRootLogin is defined
+    - name: sshd PasswordAuthentication set to '{{ sshd_PasswordAuthentication }}'
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: '^PasswordAuthentication'
+        line: 'PasswordAuthentication {{ sshd_PasswordAuthentication }}'
+        validate: 'sshd -t -f %s'
+      notify: restart ssh service
+      when: sshd_PasswordAuthentication is defined
 
 - name: On Premises CentOS
   hosts: app_server
