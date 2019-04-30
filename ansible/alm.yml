@@ -133,23 +133,38 @@
   hosts: jenkins_server
   remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
   become: yes
-  tasks: 
-    - name: sshd PermitRootLogin set to '{{ sshd_PermitRootLogin }}'
-      lineinfile:
-        dest: /etc/ssh/sshd_config
-        regexp: '^PermitRootLogin'
-        line: 'PermitRootLogin {{ sshd_PermitRootLogin }}'
-        validate: 'sshd -t -f %s'
-      notify: restart ssh service
-      when: sshd_PermitRootLogin is defined
-    - name: sshd PasswordAuthentication set to '{{ sshd_PasswordAuthentication }}'
-      lineinfile:
-        dest: /etc/ssh/sshd_config
-        regexp: '^PasswordAuthentication'
-        line: 'PasswordAuthentication {{ sshd_PasswordAuthentication }}'
-        validate: 'sshd -t -f %s'
-      notify: restart ssh service
-      when: sshd_PasswordAuthentication is defined
+  tasks:
+    - name: uncomment PermitRootLogin 
+      replace:
+        path: /etc/ssh/sshd_config
+        regexp: '#PermitRootLogin yes'
+        replace: 'PermitRootLogin  yes'
+    - name: uncomment PasswordAuthentication 
+      replace:
+        path: /etc/ssh/sshd_config
+        regexp: '#PasswordAuthentication yes'
+        replace: 'PasswordAuthentication yes'
+    - name: Restart sshd
+      service: name=sshd state=restarted
+
+- name: jenkins server host_key_checking
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: uncomment host_key_checking 
+      replace:
+        path: /etc/ansible/ansible.cfg
+        regexp: '#host_key_checking = False'
+        replace: 'host_key_checking = False'
+
+- name: set password for centos user
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: set centos password
+      user: name=centos update_password=always password=rohith
 
 - name: Deploy Nexus Server
   hosts: nexus_server
@@ -185,22 +200,26 @@
   remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
   become: yes
   tasks:
-    - name: sshd PermitRootLogin set to '{{ sshd_PermitRootLogin }}'
-      lineinfile:
-        dest: /etc/ssh/sshd_config
-        regexp: '^PermitRootLogin'
-        line: 'PermitRootLogin {{ sshd_PermitRootLogin }}'
-        validate: 'sshd -t -f %s'
-      notify: restart ssh service
-      when: sshd_PermitRootLogin is defined
-    - name: sshd PasswordAuthentication set to '{{ sshd_PasswordAuthentication }}'
-      lineinfile:
-        dest: /etc/ssh/sshd_config
-        regexp: '^PasswordAuthentication'
-        line: 'PasswordAuthentication {{ sshd_PasswordAuthentication }}'
-        validate: 'sshd -t -f %s'
-      notify: restart ssh service
-      when: sshd_PasswordAuthentication is defined
+    - name: uncomment PermitRootLogin 
+      replace:
+        path: /etc/ssh/sshd_config
+        regexp: '#PermitRootLogin yes'
+        replace: 'PermitRootLogin  yes'
+    - name: uncomment PasswordAuthentication 
+      replace:
+        path: /etc/ssh/sshd_config
+        regexp: '#PasswordAuthentication yes'
+        replace: 'PasswordAuthentication yes'
+    - name: Restart sshd
+      service: name=sshd state=restarted
+
+- name: set password for centos user
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: set centos password
+      user: name=centos update_password=always password=rohith   
 
 - name: On Premises CentOS
   hosts: app_server
