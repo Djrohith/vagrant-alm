@@ -139,8 +139,19 @@
         dest: /etc/ansible/hosts
         regexp: '^[webserver]'
         insertafter: '^#[webservers]'
-        line: '[app_server]
-               10.0.1.21 ansible_ssh_user=centos ansible_ssh_private_key_file=/home/centos/aws-private.pem'
+        line: '[app_server]'
+               
+- name: jenkins copy appserver host
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - lineinfile:
+        src: /root/Ansible-Automation/vagrant-alm/ansible/jenapphost
+        dest: /etc/ansible/hosts
+        regexp: '^[webserver]'
+        insertafter: '^#[webservers]'
+        line: '10.0.1.21 ansible_ssh_user=centos ansible_ssh_private_key_file=/home/centos/aws-private.pem ansible_ssh_pass=rohith'
 
 
 - name: jenkins server sshd permissions
