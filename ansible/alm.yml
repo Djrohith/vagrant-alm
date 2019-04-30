@@ -129,6 +129,20 @@
           delay=20
           timeout=300
 
+- name: jenkins copy appserver host
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - lineinfile:
+        src: /root/Ansible-Automation/vagrant-alm/ansible/jenapphost 
+        dest: /etc/ansible/hosts
+        regexp: '^[webserver]'
+        insertafter: '^#[webservers]'
+        line: '[app_server]
+               10.0.1.21 ansible_ssh_user=centos ansible_ssh_private_key_file=/home/centos/aws-private.pem'
+
+
 - name: jenkins server sshd permissions
   hosts: jenkins_server
   remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
@@ -158,13 +172,13 @@
         regexp: '#host_key_checking = False'
         replace: 'host_key_checking = False'
 
-- name: set password for centos user
-  hosts: jenkins_server
-  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
-  become: yes
-  tasks:
-    - name: set centos password
-      user: name=centos update_password=always password=rohith
+#- name: set password for centos user
+#  hosts: jenkins_server
+#  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+#  become: yes
+#  tasks:
+#    - name: set centos password
+#      user: name=centos update_password=always password=rohith
 
 - name: Deploy Nexus Server
   hosts: nexus_server
@@ -213,13 +227,13 @@
     - name: Restart sshd
       service: name=sshd state=restarted
 
-- name: set password for centos user
-  hosts: jenkins_server
-  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
-  become: yes
-  tasks:
-    - name: set centos password
-      user: name=centos update_password=always password=rohith   
+#- name: set password for centos user
+#  hosts: jenkins_server
+#  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+#  become: yes
+#  tasks:
+#    - name: set centos password
+#      user: name=centos update_password=always password=rohith   
 
 - name: On Premises CentOS
   hosts: app_server
