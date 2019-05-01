@@ -71,7 +71,7 @@
        mode: 0700
     - name: copy
       copy:
-       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkins/config.xml
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/config.xml
        dest: /var/lib/jenkins/jobs/soccer/config.xml
        owner: jenkins
        group: jenkins
@@ -86,7 +86,7 @@
   tasks:
     - name: copy
       copy:
-       src: credentials.xml
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/credentials.xml
        dest: /var/lib/jenkins/credentials.xml
        owner: jenkins
        group: jenkins
@@ -99,7 +99,7 @@
   tasks:
     - name: copy
       copy:
-       src: hudson.plugins.sonar.SonarGlobalConfiguration.xml
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/hudson.plugins.sonar.SonarGlobalConfiguration.xml
        dest: /var/lib/jenkins/hudson.plugins.sonar.SonarGlobalConfiguration.xml
        owner: jenkins
        group: jenkins
@@ -112,7 +112,7 @@
   tasks:
     - name: copy
       copy:
-       src: hudson.tasks.Maven.xml
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/hudson.tasks.Maven.xml
        dest: /var/lib/jenkins/hudson.tasks.Maven.xml
        owner: jenkins
        group: jenkins
@@ -125,7 +125,7 @@
   tasks:
     - name: copy
       copy:
-       src: org.quality.gates.jenkins.plugin.GlobalConfig.xml
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/org.quality.gates.jenkins.plugin.GlobalConfig.xml
        dest: /var/lib/jenkins/org.quality.gates.jenkins.plugin.GlobalConfig.xml
        owner: jenkins
        group: jenkins
@@ -138,7 +138,7 @@
   tasks:
     - name: copy
       copy:
-       src: org.sonatype.nexus.ci.config.GlobalNexusConfiguration.xml
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/org.sonatype.nexus.ci.config.GlobalNexusConfiguration.xml
        dest: /var/lib/jenkins/org.sonatype.nexus.ci.config.GlobalNexusConfiguration.xml
        owner: jenkins
        group: jenkins
@@ -151,7 +151,7 @@
   tasks:
     - name: copy
       copy:
-       src: quality.gates.jenkins.plugin.GlobalConfig.xml
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/quality.gates.jenkins.plugin.GlobalConfig.xml
        dest: /var/lib/jenkins/quality.gates.jenkins.plugin.GlobalConfig.xml
        owner: jenkins
        group: jenkins
