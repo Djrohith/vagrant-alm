@@ -8,29 +8,29 @@
 #      command: "ansible-galaxy install --ignore-errors -r requirements.yml"
 
 # Let's rock on ALM
-- name: yum update packages
-  hosts: jenkins_server
-  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
-  become: yes
+#- name: yum update packages
+#  hosts: jenkins_server
+#  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+#  become: yes
 
-  roles:
-    - linuxupdate.packages
+#  roles:
+#    - linuxupdate.packages
 
-- name: yum update packages
-  hosts: sonar_server
-  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
-  become: yes
+#- name: yum update packages
+#  hosts: sonar_server
+#  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+#  become: yes
 
-  roles:
-    - linuxupdate.packages
+#  roles:
+#    - linuxupdate.packages
 
-- name: yum update packages
-  hosts: app_server
-  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
-  become: yes
+#- name: yum update packages
+#  hosts: app_server
+#  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+#  become: yes
 
-  roles:
-    - linuxupdate.packages
+#  roles:
+#    - linuxupdate.packages
 
 - name: Deploy Jenkins CI
   hosts: jenkins_server
@@ -157,18 +157,18 @@
        group: jenkins
        mode: 0700
 
-- name: jenkins pipeline Credentials configuration
-  hosts: jenkins_server
-  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
-  become: yes
-  tasks:
-    - name: copy
-      copy:
-       src: config.xml
-       dest: /var/lib/jenkins/config.xml
-       owner: jenkins
-       group: jenkins
-       mode: 0700
+#- name: jenkins pipeline Credentials configuration
+#  hosts: jenkins_server
+#  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+#  become: yes
+#  tasks:
+#    - name: copy
+#      copy:
+#       src: config.xml
+#       dest: /var/lib/jenkins/config.xml
+#       owner: jenkins
+#       group: jenkins
+#       mode: 0700
 
 - name: jenkins pipeline plugin configuration
   hosts: jenkins_server
