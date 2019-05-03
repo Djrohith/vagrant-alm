@@ -1,0 +1,30 @@
+---
+- name: Converge
+  hosts: all
+  vars:
+    tomcat_version: "9.0.12"
+  roles:
+    - role: ansible-role-tomcat
+      tomcat_server_xml_template: "9.0/server.xml.j2"
+      tomcat_web_xml_template: "9.0/web.xml.j2"
+      tomcat_context_xml_template: "9.0/context.xml.j2"
+      tomcat_log4j2_enable: true
+      tomcat_access_log_enable: true
+      tomcat_secure_serverinfo_hide: true
+      tomcat_secure_httpheader_filter: true
+      tomcat_secure_setcharacterencoding_filter: true
+      tomcat_secure_failedrequest_filter: true
+      tomcat_service_timeout_stop_sec: 10
+  post_tasks:
+    - name: Test WebApp
+      copy:
+        dest: "{{ tomcat_catalina_base ~ '/conf/Catalina/localhost/ROOT.xml' }}"
+        group: "{{ tomcat_group }}"
+        owner: "root"
+        mode: "u=rw,g=r,o="
+        force: true
+        content: |
+          <?xml version="1.0" encoding="UTF-8"?>
+          <Context docBase="{{ tomcat_catalina_home ~ '/webapps/ROOT' }}" />
+
+      notify: Restart Tomcat

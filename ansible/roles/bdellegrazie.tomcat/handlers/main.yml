@@ -1,0 +1,26 @@
+---
+- name: Systemd Daemon-Reload
+  become: true
+  systemd:
+    daemon_reload: true
+  when:
+    - not ansible_check_mode
+    - tomcat_service_notify | bool
+
+- name: Restart Tomcat
+  become: true
+  service:
+    name: tomcat
+    state: "{{ (tomcat_service_state != 'stopped') | ternary('restarted','stopped') }}"
+  when:
+    - not ansible_check_mode
+    - tomcat_service_notify | bool
+
+- name: Start Tomcat
+  become: true
+  service:
+    name: tomcat
+    state: "{{ (tomcat_service_state != 'stopped') | ternary('started','stopped') }}"
+  when:
+    - not ansible_check_mode
+    - tomcat_service_notify | bool

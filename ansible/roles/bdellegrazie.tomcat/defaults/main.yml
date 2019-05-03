@@ -1,0 +1,78 @@
+---
+tomcat_version: '9.0.17'
+
+tomcat_cache_dir: /var/cache/ansible
+tomcat_expand_dir: /opt
+
+#tomcat_maven_repository_url:
+tomcat_maven_validate_certs: true
+
+tomcat_group_manage: true
+tomcat_group: tomcat
+#tomcat_group_gid: nnn
+
+tomcat_user_manage: true
+tomcat_user: tomcat
+#tomcat_user_uid: nnn
+tomcat_user_home: /var/lib/tomcat
+
+tomcat_catalina_home: "{{ tomcat_expand_dir }}/apache-tomcat-{{ tomcat_version }}"
+tomcat_catalina_base: /var/lib/tomcat
+tomcat_jre_home: /usr/lib/jvm/jre
+tomcat_java_home: /usr/lib/jvm/jdk
+tomcat_jdk_use: false
+
+# Optional
+#tomcat_server_xml_template: "9.0/server.xml.j2"
+#tomcat_web_xml_template: "9.0/web.xml.j2"
+#tomcat_context_xml_template: "9.0/context.xml.j2"
+#tomcat_ssl_enable: false
+#tomcat_access_log_enable: true
+tomcat_secure_http_port: 8080
+tomcat_secure_https_port: 8443
+tomcat_secure_serverinfo_hide: false
+tomcat_secure_serverinfo: "Web Server"
+tomcat_secure_httpheader_filter: false
+tomcat_secure_setcharacterencoding_filter: false
+tomcat_secure_failedrequest_filter: false
+tomcat_secure_session_timeout_min: 30
+
+tomcat_java_opts:
+  - "-Djava.awt.headless=true"
+  - "-Djava.security.egd=file:/dev/./urandom"
+
+tomcat_catalina_heap_min_mb: '512'
+tomcat_catalina_heap_max_mb: '1024'
+
+tomcat_catalina_opts:
+  - "-server"
+  - "-XX:+UseParallelGC"
+  - "-Xms{{ tomcat_catalina_heap_min_mb }}M"
+  - "-Xmx{{ tomcat_catalina_heap_max_mb }}M"
+
+tomcat_catalina_classpath_log4j2:
+  - '${CATALINA_BASE}/log4j2/lib/*'
+  - '${CATALINA_BASE}/log4j2/conf'
+
+tomcat_catalina_classpath: "{{ tomcat_log4j2_enable | ternary(tomcat_catalina_classpath_log4j2, []) | list }}"
+
+tomcat_log4j2_enable: true
+tomcat_log4j2_version: '2.11.2'
+tomcat_log4j2_conf_template: 'log4j2-tomcat.xml.j2'
+tomcat_log4j2_conf_copy: true
+
+tomcat_limit_nofile: 16384
+tomcat_service_umask: "0007"
+
+tomcat_host_auto_deploy: false
+tomcat_host_deploy_xml: false
+tomcat_host_unpack_wars: false
+
+tomcat_service_timeout_stop_sec: 90
+tomcat_service_mgr: "{{ ansible_service_mgr }}"
+tomcat_service_conf_systemd: tomcat.systemd.j2
+tomcat_service_conf_sysvinit: tomcat.sysvinit.j2
+tomcat_service_manage: true
+tomcat_service_enable: true
+tomcat_service_notify: true
+tomcat_service_state: started

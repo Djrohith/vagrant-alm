@@ -1,0 +1,24 @@
+Description=Apache Tomcat Web Application Container
+After=syslog.target network.target
+
+[Service]
+Type=forking
+
+Environment=JAVA_HOME={{ tomcat_java_home }}
+Environment=CATALINA_PID={{ tomcat_install_folder }}/tomcat/temp/tomcat.pid
+Environment=CATALINA_HOME={{ tomcat_install_folder }}/tomcat
+Environment=CATALINA_BASE={{ tomcat_install_folder }}/tomcat
+Environment='CATALINA_OPTS=$JAVA_OPTS -Xms128m -Xmx{{ ansible_memtotal_mb * 0.8 | round | int }}m -XX:-HeapDumpOnOutOfMemoryError '
+Environment='JAVA_OPTS=-Djava.awt.headless=true -Djava.security.egd=file:/dev/./urandom'
+
+ExecStart={{ tomcat_install_folder }}/tomcat/bin/startup.sh
+ExecStop=/bin/kill -15 $MAINPID
+
+User={{ tomcat_user }}
+Group={{ tomcat_group }}
+UMask=0007
+RestartSec=10
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

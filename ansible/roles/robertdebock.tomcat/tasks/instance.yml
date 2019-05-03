@@ -30,7 +30,7 @@
     creates: "{{ tomcat_directory }}/{{ instance.name }}/bin"
   register: install_tomcat
   until: install_tomcat is succeeded
-  retries: 3
+  retries: 6
 
 - name: configure tomcat instance
   template:

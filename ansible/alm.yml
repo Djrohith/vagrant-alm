@@ -55,7 +55,7 @@
        dest: /root/aws-private.pem
        owner: jenkins
        group: jenkins
-       mode: 0700
+       mode: 0644
 
 - name: jenkins pipeline configuration
   hosts: jenkins_server
@@ -75,9 +75,61 @@
        dest: /var/lib/jenkins/jobs/soccer/config.xml
        owner: jenkins
        group: jenkins
-       mode: 0700
+       mode: 0644
  
 
+- name: jenkins secrets hudson secret configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: Creates directory
+      file:
+       path: /var/lib/jenkins/secrets/
+       state: directory
+       owner: jenkins
+       group: jenkins
+       mode: 0700
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/hudson.util.Secret
+       dest: /var/lib/jenkins/secrets/hudson.util.Secret
+       owner: jenkins
+       group: jenkins
+       mode: 0644
+
+- name: jenkins secrets-master.key configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/master.key
+       dest: /var/lib/jenkins/secrets/master.key
+       owner: jenkins
+       group: jenkins
+       mode: 0644
+
+- name: jenkins pipeline configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: Creates directory
+      file:
+       path: /var/lib/jenkins/jobs/petclinic/
+       state: directory
+       owner: jenkins
+       group: jenkins
+       mode: 0700
+    - name: copy
+      copy:
+       src: config.xml
+       dest: /var/lib/jenkins/jobs/petclinic/config.xml
+       owner: jenkins
+       group: jenkins
+       mode: 0700
 
 - name: jenkins pipeline Credentials configuration
   hosts: jenkins_server
@@ -90,7 +142,7 @@
        dest: /var/lib/jenkins/credentials.xml
        owner: jenkins
        group: jenkins
-       mode: 0700
+       mode: 0644
 
 - name: jenkins pipeline sonar global configuration
   hosts: jenkins_server
@@ -103,7 +155,7 @@
        dest: /var/lib/jenkins/hudson.plugins.sonar.SonarGlobalConfiguration.xml
        owner: jenkins
        group: jenkins
-       mode: 0700
+       mode: 0644
 
 - name: jenkins pipeline maven configuration
   hosts: jenkins_server
@@ -116,7 +168,7 @@
        dest: /var/lib/jenkins/hudson.tasks.Maven.xml
        owner: jenkins
        group: jenkins
-       mode: 0700
+       mode: 0644
 
 - name: jenkins pipeline qualitygates configuration
   hosts: jenkins_server
@@ -129,7 +181,7 @@
        dest: /var/lib/jenkins/org.quality.gates.jenkins.plugin.GlobalConfig.xml
        owner: jenkins
        group: jenkins
-       mode: 0700
+       mode: 0644
 
 - name: jenkins pipeline nexus configuration
   hosts: jenkins_server
@@ -142,7 +194,7 @@
        dest: /var/lib/jenkins/org.sonatype.nexus.ci.config.GlobalNexusConfiguration.xml
        owner: jenkins
        group: jenkins
-       mode: 0700
+       mode: 0644
 
 - name: jenkins pipeline sonarquality configuration
   hosts: jenkins_server
@@ -155,7 +207,7 @@
        dest: /var/lib/jenkins/quality.gates.jenkins.plugin.GlobalConfig.xml
        owner: jenkins
        group: jenkins
-       mode: 0700
+       mode: 0644
 
 #- name: jenkins pipeline Credentials configuration
 #  hosts: jenkins_server
@@ -321,6 +373,16 @@
 #  tasks:
 #    - name: set centos password
 #      user: name=centos update_password=always password=rohith   
+
+- name: Deploy tomcat Server
+  hosts: app_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+
+  roles:
+    - robertdebock.java
+    - robertdebock.tomcat
+
 
 - name: On Premises CentOS
   hosts: app_server

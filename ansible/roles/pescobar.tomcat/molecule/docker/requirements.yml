@@ -1,0 +1,5 @@
+---
+
+# define here all the role requirements for this playbook
+
+- pescobar.java_openjdk

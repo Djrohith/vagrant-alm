@@ -3,7 +3,7 @@
 
 # The explicit version to use when referring to the short name.
 tomcat_version7: 7.0.92
-tomcat_version8: 8.5.37
+tomcat_version8: 8.5.40
 tomcat_version9: 9.0.14
 
 # The location where to download Apache Tomcat from.
@@ -17,7 +17,7 @@ tomcat_user: tomcat
 tomcat_group: tomcat
 tomcat_xms: 512M
 tomcat_xmx: 1024M
-tomcat_non_ssl_connector_port: 8080
+tomcat_non_ssl_connector_port: 9090
 tomcat_ssl_connector_port: 8443
 tomcat_shutdown_port: 8005
 tomcat_ajp_port: 8009

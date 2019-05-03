@@ -1,0 +1,6 @@
+---
+- hosts: all
+  roles:
+    - role: geerlingguy.repo-epel
+      when: ansible_os_family | lower == 'redhat'
+    - geerlingguy.java

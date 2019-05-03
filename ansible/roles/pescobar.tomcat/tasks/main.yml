@@ -1,0 +1,66 @@
+---
+# tasks file for ansible-role-tomcat
+
+- name: Add local group for tomcat
+  group:
+    name: "{{ tomcat_group }}"
+    state: present
+
+- name: Add local user for tomcat
+  user:
+    name: "{{ tomcat_user }}"
+    group: "{{ tomcat_group }}"
+    state: present
+    system: yes
+
+- name: Download the tomcat tarball
+  get_url:
+    url: "{{ tomcat_url }}"
+    dest: "{{ tomcat_install_folder }}"
+  register: download
+
+- name: set a variable with the full path of the downloaded .tar.gz file
+  set_fact:
+    tarball_path: "{{ download.dest }}"
+
+- name: Uncompress the tarball to {{ install_foder }} . By default /opt
+  unarchive:
+    src: "{{ tarball_path }}"
+    dest: "{{ tomcat_install_folder }}"
+    remote_src: yes
+    owner: "{{ tomcat_user }}"
+    group: "{{ tomcat_group }}"
+
+- name: Find the folder where the tomcat tarball has been uncompressed
+  find:
+    paths: "{{ tomcat_install_folder }}"
+    patterns: 'apache-tomcat*'
+    file_type: directory
+  register: find_result
+
+# [files] is a list of dicts with the info of all the directories starting by apache-tomcat*
+# we fetch the path of last element in the list
+- name: set a variable with the path where the tarball has been uncompressed
+  set_fact:
+    tomcat_path: "{{ find_result['files'][-1]['path'] }}"
+
+- name: Create a symlink /opt/tomcat
+  file:
+    src: "{{ tomcat_path }}"
+    dest: "{{ tomcat_install_folder }}/tomcat"
+    state: link
+
+- name: Copy /etc/systemd/system/tomcat.service
+  template:
+    src: etc/systemd/system/tomcat.service
+    dest: /etc/systemd/system/tomcat.service
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Start and enable the tomcat service
+  systemd:
+    name: tomcat
+    state: started
+    enabled: yes
+    daemon_reload: yes

@@ -5,7 +5,7 @@
       <name>sonar</name>
       <username>admin</username>
       <sonarUrl>http://10.0.1.19:9000</sonarUrl>
-      <password>admin</password>
+      <secretPass>{AQAAABAAAAAQJVKxE7jrgfchOyNiBsK3IkrO+fv+QkP70ta8IIcOq8w=}</secretPass>
       <timeToWait>0</timeToWait>
       <maxWaitTime>0</maxWaitTime>
     </org.quality.gates.jenkins.plugin.GlobalConfigDataForSonarInstance>

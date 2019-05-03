@@ -4,7 +4,7 @@
     <hudson.plugins.sonar.SonarInstallation>
       <name>sonar</name>
       <serverUrl>http://10.0.1.19:9000</serverUrl>
-      <serverAuthenticationToken>{AQAAABAAAAAQJtM5Vd2LjBvGz/UqL//RPCVIBq1xNH+VgrUfZsZY7A8=}</serverAuthenticationToken>
+      <serverAuthenticationToken>{AQAAABAAAAAQnEb8Vlkx3ajod9dSMmmtr0Aq/IBJWy/OMR3hDsoJsN0=}</serverAuthenticationToken>
       <mojoVersion></mojoVersion>
       <additionalProperties></additionalProperties>
       <additionalAnalysisProperties></additionalAnalysisProperties>
