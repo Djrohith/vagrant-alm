@@ -279,7 +279,7 @@
         dest: /etc/ansible/hosts
         regexp: '^[webserver]'
         insertafter: '^#[webservers]'
-        line: '10.0.1.21 ansible_ssh_user=centos ansible_ssh_private_key_file=/home/centos/aws-private.pem ansible_ssh_pass=rohith'
+        line: '10.0.1.21 ansible_ssh_user=deploy ansible_ssh_private_key_file=/home/centos/aws-private.pem ansible_ssh_pass=rohith'
 
 
 - name: jenkins server sshd permissions
@@ -311,13 +311,25 @@
         regexp: '#host_key_checking = False'
         replace: 'host_key_checking = False'
 
-#- name: set password for centos user
-#  hosts: jenkins_server
-#  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
-#  become: yes
-#  tasks:
-#    - name: set centos password
-#      user: name=centos update_password=always password=rohith
+- name: create new user
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    
+  roles:
+    - lnovara.deploy-user
+  
+- name: set password for existing user
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: create password
+      user: name=deploy update_password=always password=$6$DZ8HJeMI$pbz5Lb8eVAs5Q/GJhCnml6hdDELlyyb37itrYbIYtlsJQqM9xKyY/bPEkZnmC9l5iBOa7Pix/YRaxCiLGF9NK1
+
+
+
 
 - name: Deploy Nexus Server
   hosts: nexus_server
@@ -366,13 +378,24 @@
     - name: Restart sshd
       service: name=sshd state=restarted
 
-#- name: set password for centos user
-#  hosts: jenkins_server
-#  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
-#  become: yes
-#  tasks:
-#    - name: set centos password
-#      user: name=centos update_password=always password=rohith   
+- name: create new user
+  hosts: app_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+
+  roles:
+    - lnovara.deploy-user
+
+
+
+- name: set password for existing user
+  hosts: app_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: create password
+      user: name=deploy update_password=always password=$6$DZ8HJeMI$pbz5Lb8eVAs5Q/GJhCnml6hdDELlyyb37itrYbIYtlsJQqM9xKyY/bPEkZnmC9l5iBOa7Pix/YRaxCiLGF9NK1
 
 - name: Deploy tomcat Server
   hosts: app_server
