@@ -329,8 +329,6 @@
       user: name=deploy update_password=always password=$6$DZ8HJeMI$pbz5Lb8eVAs5Q/GJhCnml6hdDELlyyb37itrYbIYtlsJQqM9xKyY/bPEkZnmC9l5iBOa7Pix/YRaxCiLGF9NK1
 
 
-
-
 - name: Deploy Nexus Server
   hosts: nexus_server
   remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
@@ -338,7 +336,7 @@
 
   roles:
     - geerlingguy.java
-    - dockpack.nexus
+    - ansible-thoteam.nexus3-oss
 
 - name: Deploy Sonar Server
   hosts: sonar_server
@@ -386,7 +384,6 @@
 
   roles:
     - lnovara.deploy-user
-
 
 
 - name: set password for existing user
