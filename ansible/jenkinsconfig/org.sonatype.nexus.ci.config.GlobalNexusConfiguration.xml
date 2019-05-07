@@ -5,7 +5,7 @@
       <id>nexus</id>
       <internalId>ff0db09a-f2a9-4356-9178-5050d211aff1</internalId>
       <displayName>nexus</displayName>
-      <serverUrl>http://10.0.1.19:8081</serverUrl>
+      <serverUrl>http://10.0.1.20:8081</serverUrl>
       <credentialsId>58bb8d11-4d61-4573-bbf5-c37221ff5754</credentialsId>
     </org.sonatype.nexus.ci.config.Nxrm3Configuration>
   </nxrmConfigs>
