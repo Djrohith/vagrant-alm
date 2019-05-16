@@ -1,0 +1,71 @@
+- name: jenkins secrets hudson secret configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: Creates directory
+      file:
+       path: /var/lib/jenkins/secrets/
+       state: directory
+       owner: jenkins
+       group: jenkins
+       mode: 0700
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/hudson.util.Secret
+       dest: /var/lib/jenkins/secrets/hudson.util.Secret
+       owner: jenkins
+       group: jenkins
+       mode: 0644
+
+- name: jenkins secrets-master.key configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/master.key
+       dest: /var/lib/jenkins/secrets/master.key
+       owner: jenkins
+       group: jenkins
+       mode: 0644
+
+- name: jenkins pipeline sonar global configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/hudson.plugins.sonar.SonarGlobalConfiguration.xml
+       dest: /var/lib/jenkins/hudson.plugins.sonar.SonarGlobalConfiguration.xml
+       owner: jenkins
+       group: jenkins
+       mode: 0644
+
+- name: jenkins pipeline qualitygates configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/org.quality.gates.jenkins.plugin.GlobalConfig.xml
+       dest: /var/lib/jenkins/org.quality.gates.jenkins.plugin.GlobalConfig.xml
+       owner: jenkins
+       group: jenkins
+       mode: 0644
+
+- name: jenkins pipeline sonarquality configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/quality.gates.jenkins.plugin.GlobalConfig.xml
+       dest: /var/lib/jenkins/quality.gates.jenkins.plugin.GlobalConfig.xml
+       owner: jenkins
+       group: jenkins
+       mode: 0644

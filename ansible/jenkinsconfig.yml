@@ -1,0 +1,173 @@
+- name: jenkins copy-key from master
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/aws-private.pem
+       dest: /root/aws-private.pem
+       owner: jenkins
+       group: jenkins
+       mode: 0644
+
+- name: jenkins pipeline configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: Creates directory
+      file:
+       path: /var/lib/jenkins/jobs/soccer/
+       state: directory
+       owner: jenkins
+       group: jenkins
+       mode: 0700
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/config.xml
+       dest: /var/lib/jenkins/jobs/soccer/config.xml
+       owner: jenkins
+       group: jenkins
+       mode: 0644
+- name: jenkins secrets hudson secret configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: Creates directory
+      file:
+       path: /var/lib/jenkins/secrets/
+       state: directory
+       owner: jenkins
+       group: jenkins
+       mode: 0700
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/hudson.util.Secret
+       dest: /var/lib/jenkins/secrets/hudson.util.Secret
+       owner: jenkins
+       group: jenkins
+       mode: 0644
+
+- name: jenkins secrets-master.key configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/master.key
+       dest: /var/lib/jenkins/secrets/master.key
+       owner: jenkins
+       group: jenkins
+       mode: 0644
+- name: jenkins pipeline configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: Creates directory
+      file:
+       path: /var/lib/jenkins/jobs/petclinic/
+       state: directory
+       owner: jenkins
+       group: jenkins
+       mode: 0700
+    - name: copy
+      copy:
+       src: config.xml
+       dest: /var/lib/jenkins/jobs/petclinic/config.xml
+       owner: jenkins
+       group: jenkins
+       mode: 0700
+
+- name: jenkins pipeline Credentials configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/credentials.xml
+       dest: /var/lib/jenkins/credentials.xml
+       owner: jenkins
+       group: jenkins
+       mode: 0644
+- name: jenkins pipeline sonar global configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/hudson.plugins.sonar.SonarGlobalConfiguration.xml
+       dest: /var/lib/jenkins/hudson.plugins.sonar.SonarGlobalConfiguration.xml
+       owner: jenkins
+       group: jenkins
+       mode: 0644
+
+- name: jenkins pipeline maven configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/hudson.tasks.Maven.xml
+       dest: /var/lib/jenkins/hudson.tasks.Maven.xml
+       owner: jenkins
+       group: jenkins
+       mode: 0644
+
+- name: jenkins pipeline qualitygates configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/org.quality.gates.jenkins.plugin.GlobalConfig.xml
+       dest: /var/lib/jenkins/org.quality.gates.jenkins.plugin.GlobalConfig.xml
+       owner: jenkins
+       group: jenkins
+       mode: 0644
+- name: jenkins pipeline nexus configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/org.sonatype.nexus.ci.config.GlobalNexusConfiguration.xml
+       dest: /var/lib/jenkins/org.sonatype.nexus.ci.config.GlobalNexusConfiguration.xml
+       owner: jenkins
+       group: jenkins
+       mode: 0644
+
+- name: jenkins pipeline sonarquality configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/quality.gates.jenkins.plugin.GlobalConfig.xml
+       dest: /var/lib/jenkins/quality.gates.jenkins.plugin.GlobalConfig.xml
+       owner: jenkins
+       group: jenkins
+       mode: 0644
+
+- name: jenkins restart server
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: Restart Jenkins to make the plugin data available
+      service: name=jenkins state=restarted
+    - name: Wait for Jenkins to restart
+      wait_for:
+          host=localhost
+          port=8080
+          delay=20
+          timeout=300

@@ -1,0 +1,20 @@
+---
+- name: Deploy Sonar Server
+  hosts: sonar_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+
+  roles:
+    - wtanaka.unzip
+    - zanini.sonar
+
+
+- name: configure jenkins with sonar
+  hosts: jenkins_server
+  become: yes 
+  tasks: 
+    - name: install sonar plugin 
+      i
+
+
+

@@ -1,0 +1,12 @@
+- name: jenkins pipeline nexus configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: copy
+      copy:
+       src: /root/Ansible-Automation/vagrant-alm/ansible/jenkinsconfig/org.sonatype.nexus.ci.config.GlobalNexusConfiguration.xml
+       dest: /var/lib/jenkins/org.sonatype.nexus.ci.config.GlobalNexusConfiguration.xml
+       owner: jenkins
+       group: jenkins
+       mode: 0644

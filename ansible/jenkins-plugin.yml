@@ -1,0 +1,28 @@
+---
+- name: jenkins pipeline plugin configuration
+  hosts: jenkins_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+  tasks:
+    - name: Adding Plugin
+      jenkins_plugin:
+          name: "{{ item }}"
+          url_username: admin
+          url_password: admin123
+          url: http://localhost:8080
+      with_items:
+	- "{{ jenkins_plugins | default('quality-gates') }}"
+      tags: ['skip_ansible_lint']
+      register: plugin_result
+      until: plugin_result is success
+      retries: 3
+      delay: 2
+
+    - name: Restart Jenkins to make the plugin data available
+      service: name=jenkins state=restarted
+    - name: Wait for Jenkins to restart
+      wait_for:
+          host=localhost
+          port=8080
+          delay=20
+          timeout=300

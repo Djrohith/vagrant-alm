@@ -1,0 +1,8 @@
+- name: Deploy Nexus Server
+  hosts: nexus_server
+  remote_user: "{{ ansible_ssh_user | default('vagrant') }}"
+  become: yes
+
+  roles:
+    - geerlingguy.java
+    - ansible-thoteam.nexus3-oss
